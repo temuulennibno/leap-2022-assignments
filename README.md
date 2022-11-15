@@ -1,5 +1,5 @@
 # Temuulen Narmandakh
 
-## Team Gree
+## Team Green
 
 `test`
