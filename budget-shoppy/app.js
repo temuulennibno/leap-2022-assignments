@@ -1,3 +1,9 @@
+const params = new URL(window.location).searchParams;
+const category = params.get("category");
+const limit = Number(params.get("limit")) || 12;
+const page = Number(params.get("page")) || 1;
+const searchQuery = params.get("q");
+
 function getProductCard(product) {
   return `<div class="col-3">
             <div class="card">
@@ -13,7 +19,7 @@ function getProductCard(product) {
           </div>`;
 }
 
-const productsTarget = document.querySelector('#productsTarget');
+const productsTarget = document.querySelector("#productsTarget");
 
 function getPagination(total, currentPage, limit) {
   let pagination = `<nav aria-label="..."> <ul class="pagination justify-content-center">`;
@@ -25,10 +31,17 @@ function getPagination(total, currentPage, limit) {
       		<span class="page-link">${page}</span>
 		</li>`;
     } else {
+      const queryParam = searchQuery ? "&q=" + searchQuery : "";
       pagination += `
-	  <li class="page-item">
-	  	<a class="page-link" href="javascript:getProducts(${limit},${limit * (page - 1)});">${page}</a>
-	  </li>`;
+        <li class="page-item">
+          <a 
+          class="page-link"
+          href="${
+            window.location.pathname
+          }?limit=${12}&page=${page}${queryParam}">
+            ${page}
+          </a>
+        </li>`;
     }
   }
   pagination += `</ul></nav>`;
@@ -36,7 +49,7 @@ function getPagination(total, currentPage, limit) {
 }
 
 async function getProducts(limit, page, category, searchQuery) {
-  productsTarget.innerHTML = '';
+  productsTarget.innerHTML = "";
   const skip = (page - 1) * limit;
 
   let dataUrl = `https://dummyjson.com/products?limit=${limit}&skip=${skip}`;
@@ -59,18 +72,12 @@ async function getProducts(limit, page, category, searchQuery) {
   productsTarget.innerHTML += getPagination(data.total, page, limit);
 }
 
-const params = new URL(window.location).searchParams;
-const category = params.get('category');
-const limit = Number(params.get('limit')) || 12;
-const page = Number(params.get('page')) || 1;
-const searchQuery = params.get('q');
-
 getProducts(limit, page, category, searchQuery);
 
 function getMenuItem(menuItem) {
   return `
     <li class="nav-item">
-      <a class="nav-link ${menuItem.isActive && 'active'}"
+      <a class="nav-link ${menuItem.isActive && "active"}"
          aria-current="page"
          href="${menuItem.link}">
          ${menuItem.name}
@@ -78,10 +85,10 @@ function getMenuItem(menuItem) {
     </li>`;
 }
 
-const menuTarget = document.querySelector('#menuTarget');
+const menuTarget = document.querySelector("#menuTarget");
 
 async function getCategories() {
-  const res = await fetch('https://dummyjson.com/products/categories');
+  const res = await fetch("https://dummyjson.com/products/categories");
   const categories = await res.json();
   return categories.slice(0, 5);
 }
@@ -92,7 +99,7 @@ async function getMenus() {
   const menuCategories = categories.map((category) => {
     return {
       isActive: false,
-      link: window.location.pathname + '?category=' + category,
+      link: window.location.pathname + "?category=" + category,
       name: category,
     };
   });
